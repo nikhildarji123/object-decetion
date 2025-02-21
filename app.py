@@ -1,18 +1,14 @@
-# Flask utils
 from flask import Flask, redirect, url_for, request, render_template
 from werkzeug.utils import secure_filename
 from gevent.pywsgi import WSGIServer
+import os
+from app_helper import get_detected_image
 
-from app_helper import *
-
-# Define a flask app
 app = Flask(__name__)
-
 
 @app.route("/")
 def index():
   return render_template("index.html")
-
 
 @app.route('/uploader', methods = ['GET', 'POST'])
 def upload_file():
@@ -21,7 +17,6 @@ def upload_file():
 	if request.method == 'POST':
 		f = request.files['file']
 
-		# Save the file to ./uploads
 		basepath = os.path.dirname(__file__)
 		file_path = os.path.join(basepath, 'static','uploads', secure_filename(f.filename))
 		f.save(file_path)

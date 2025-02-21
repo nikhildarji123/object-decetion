@@ -23,7 +23,7 @@ def get_detected_image(image, filename):
 	model_config = os.path.join(basepath, MODEL_CONFIG)
 	OUTPUT_PATH = os.path.join(basepath,'static','detections')
 		
-	np.random.seed(42) #Set seed so that we get the same results everytime
+	np.random.seed(42) 
 	LABELS = open(label_file).read().strip().split("\n")
 
 	COLORS = np.random.randint(0, 255, size=(len(LABELS), 3),dtype="uint8")
@@ -42,39 +42,23 @@ def get_detected_image(image, filename):
 
 	detected_objects = []
 
-	for i in range(0, boxes.shape[2]): #For each detection
-	    classID = int(boxes[0, 0, i, 1]) #Class ID
-	    confidence = boxes[0, 0, i, 2] #Confidence scores
+	for i in range(0, boxes.shape[2]): 
+	    classID = int(boxes[0, 0, i, 1]) 
+	    confidence = boxes[0, 0, i, 2] 
 	    if confidence > threshold:
 	        (H, W) = img.shape[:2]
-	        box = boxes[0, 0, i, 3:7] * np.array([W, H, W, H]) #Bounding box
+	        box = boxes[0, 0, i, 3:7] * np.array([W, H, W, H]) 
 	        (startX, startY, endX, endY) = box.astype("int")
 	        boxW = endX - startX
-	        boxH = endY - startY
-
-	        # extract the pixel-wise segmentation for the object,       
+	        boxH = endY - startY      
 	        mask = masks[i, classID]
-
-	        
-	        # resize the mask such that it's the same dimensions of
-	        # the bounding box, and interpolation gives individual pixel positions
 	        mask = cv2.resize(mask, (boxW, boxH), interpolation=cv2.INTER_CUBIC)
-
-	        # then finally threshold to create a *binary* mask
 	        mask = (mask > threshold)
-	        # print ("Mask after threshold", mask.shape)
-	        
-	        # extract the ROI of the image but *only* extracted the
-	        # masked region of the ROI
 	        roi = img[startY:endY, startX:endX][mask]
 
-	        # grab the color used to visualize this particular class,
-	        # then create a transparent overlay by blending the color
-	        # with the ROI
 	        color = COLORS[classID]
 	        blended = ((0.4 * color) + (0.6 * roi)).astype("uint8")
 
-	        # Change the colors in the original to blended color
 	        img[startY:endY, startX:endX][mask] = blended
 
 	        color = COLORS[classID]

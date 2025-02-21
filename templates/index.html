@@ -1,16 +1,119 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<center>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object Detection Upload</title>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #9c412b 0%, #c3806c 100%);
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .centered {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            margin-top: 50px;
+            width: 60%;
+            max-width: 600px;
+        }
+
+        .image-container {
+            margin-bottom: 20px;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            display: none; 
+        }
+
+        p {
+            font-size: 20px;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 15px;
+        }
+
+        .detected-text {
+            color: #28a745;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .upload-form {
+            margin-top: 30px;
+        }
+
+        input[type="file"] {
+            margin-bottom: 15px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        input[type="submit"] {
+            background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
     <div class="centered">
-	    <p><b>Upload an image to see object detection</b></p>
-	    <div class="upload-form">
-	      <form action = "/uploader" method = "POST" 
-	        enctype = "multipart/form-data">
-	        <input type = "file" name = "file" />
-	        <input type = "submit"/>
-	      </form>
-	    </div>
-	 </div>
-</center> 
+        <p>Upload an image to see object detection</p>
+        
+        <div class="image-container">
+            <img id="preview">
+        </div>
+
+        <div class="upload-form">
+            <form action="/uploader" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" id="fileInput" required onchange="previewImage(event)"/>
+                <input type="submit" value="Upload Image"/>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function previewImage(event) {
+            let file = event.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let img = document.getElementById("preview");
+                    img.src = e.target.result;
+                    img.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+
+</body>
+</html>
 {% endblock %}
